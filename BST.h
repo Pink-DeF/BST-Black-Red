@@ -6,14 +6,15 @@
 
 using Key = uint32_t;
 using Value = double;
+enum color
+{
+    BLACK = 0,
+    RED = 1
+};
 
 class BinarySearchTree 
 {
-    enum color
-    {
-        BLACK = 0,
-        RED = 1
-    };
+
     struct Node 
     {
     public:
@@ -39,9 +40,11 @@ class BinarySearchTree
         Node* left = nullptr;   
         Node* right = nullptr;  
     };
+    Node* nill = new Node();
+
     void leftrotate(Node* node);
     void rightrotate(Node* node);
-    void rebalancing(Node* node);
+    void balanceTree(Node* node);
 
 public:
     //! Конструктор по умолчанию
@@ -83,7 +86,6 @@ public:
         Node *_node;
     };
 
-    //! Константный итератор бинарного дерева поиска
     class ConstIterator 
     {
     public:
@@ -105,14 +107,15 @@ public:
         const Node *_node;
     };
 
-    //! Вставить элемент с ключем key и значением value
+    //Friend
+    bool NodeExists(Node* node);
+    size_t ChildCount(Node* node);
+
     void insert(const Key &key, const Value &value);
-    //! Удалить все элементы с ключем key
     void erase(const Key &key);
-    //! Найти первый элемент в дереве, равный ключу key
-    ConstIterator find(const Key &key) const;
-    //! Найти первый элемент в дереве, равный ключу key
-    Iterator find(const Key &key);
+
+    ConstIterator find(const Key& key) const;
+    Iterator find(const Key& key);
 
     /*!***********************************************************
     Найти все элементы, у которых ключ равен key:
@@ -153,6 +156,6 @@ public:
 	size_t max_height() const;
 
 private:
-    size_t _size = 0; //!< размер дерева
-    Node *_root = nullptr; //!< корневой узел дерева
+    size_t _size = 0;
+    Node *_root = nullptr;
 };

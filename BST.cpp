@@ -92,15 +92,15 @@ void BinarySearchTree::Node::insert(const Key& key, const Value& value)
     Node location = *this;
     std::pair<Node*, bool> direction;
 
-    if (key < location.keyValuePair.first) { direction = std::make_pair(left, 1); }
-    else { direction = std::make_pair(right, 0); }
+    if (key < location.keyValuePair.first) { direction = std::make_pair(location.left, 1); }
+    else { direction = std::make_pair(location.right, 0); }
 
     while (direction.first != nullptr)
     {
         location = *direction.first;
 
-        if (key < location.keyValuePair.first) { direction = std::make_pair(left, 1); }
-        else { direction = std::make_pair(right, 0); }
+        if (key < location.keyValuePair.first) { direction = { location.left, 1 }; }
+        else { direction = { location.right, 0 }; }
     }
 
     if (direction.second)
@@ -175,7 +175,6 @@ void BinarySearchTree::Node::erase(const Key& key)
     delete find_node;
 }
 
-
 //Rebalancing
 void BinarySearchTree::leftrotate(Node* node)
 {
@@ -185,7 +184,7 @@ void BinarySearchTree::rightrotate(Node* node)
 {
 
 }
-void BinarySearchTree::rebalancing(Node* node)
+void BinarySearchTree::balanceTree(Node* node)
 {
     Node* uncle;
     while (node->parent->color == RED)
@@ -240,6 +239,67 @@ void BinarySearchTree::rebalancing(Node* node)
                 leftrotate(node);
             }
         }
+    }
+    _root->color = BLACK;
+}
+
+//Friend
+bool BinarySearchTree::NodeExists(Node* node)
+{
+    return node != nill;
+}
+size_t BinarySearchTree::ChildCount(BinarySearchTree::Node* node)
+{
+    size_t count = 0;
+    if (NodeExists(node->left)) { count++; }
+    if (NodeExists(node->right)) { count++; }
+    return count;
+}
+
+//Tree main
+void BinarySearchTree::insert(const Key& key, const Value& value)
+{
+    if (!_root) { _root = new Node(key, value, nullptr, nill, nill); return; }
+
+    Node location = *_root;
+    std::pair<Node*, bool> direction;
+
+    if (key < location.keyValuePair.first) { direction = std::make_pair(location.left, 1); }
+    else { direction = std::make_pair(location.right, 0); }
+
+    while (direction.first != nullptr)
+    {
+        location = *direction.first;
+
+        if (key < location.keyValuePair.first) { direction = { location.left, 1 }; }
+        else { direction = { location.right, 0 }; }
+    }
+
+    Node* nNode = new Node(key, value, &location, nill, nill);
+    if (direction.second)
+    {
+        location.left = nNode;
+    }
+    else
+    {
+        location.right = nNode;
+    }
+
+    balanceTree(nNode);
+    _size++;
+}
+void BinarySearchTree::erase(const Key& key)
+{
+    Node* DeleteNode = find(key);
+    bool DeleteColor = DeleteNode->color;
+    Node* child;
+
+    if (ChildCount(DeleteNode) < 2)
+    {
+
+    }
+    else
+    {
     }
 
 }
