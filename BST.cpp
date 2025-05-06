@@ -255,6 +255,14 @@ size_t BinarySearchTree::ChildCount(BinarySearchTree::Node* node)
     if (NodeExists(node->right)) { count++; }
     return count;
 }
+BinarySearchTree::Node* BinarySearchTree::getChildOrMock(BinarySearchTree::Node* node)
+{
+
+}
+BinarySearchTree::Node* BinarySearchTree::transplantNode(BinarySearchTree::Node* ToNode, BinarySearchTree::Node* FromNode)
+{
+
+}
 
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
@@ -300,6 +308,11 @@ void BinarySearchTree::erase(const Key& key)
     }
     else
     {
+        Node* minNode = find_min(DeleteNode->right);
+        DeleteNode->keyValuePair = minNode->keyValuePair;
+        DeleteNode->color = minNode->color;
+        child = getChildOrMock(minNode);
+        transplantNode(minNode, child);
     }
-
+    if(DeleteColor == BLACK){}
 }

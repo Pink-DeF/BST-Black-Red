@@ -110,6 +110,8 @@ public:
     //Friend
     bool NodeExists(Node* node);
     size_t ChildCount(Node* node);
+    Node* getChildOrMock(Node* node);
+    Node* transplantNode(Node* ToNode, Node* FromNode);
 
     void insert(const Key &key, const Value &value);
     void erase(const Key &key);
