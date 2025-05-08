@@ -178,11 +178,17 @@ void BinarySearchTree::Node::erase(const Key& key)
 //Rebalancing
 void BinarySearchTree::leftrotate(Node* node)
 {
-
+    node->right->parent = node->parent;
+    node->parent = node->right;
+    node->right = node->right->left;
+    node->parent->left = nill;
 }
 void BinarySearchTree::rightrotate(Node* node)
 {
-
+    node->left->parent = node->parent;
+    node->parent = node->left;
+    node->left =  node->left->right;
+    node->parent->right = nill;
 }
 void BinarySearchTree::balanceTree(Node* node)
 {
@@ -257,7 +263,7 @@ size_t BinarySearchTree::ChildCount(BinarySearchTree::Node* node)
 }
 BinarySearchTree::Node* BinarySearchTree::getChildOrMock(BinarySearchTree::Node* node)
 {
-
+    return NodeExists(node->left) ? node->left : node->right;
 }
 BinarySearchTree::Node* BinarySearchTree::transplantNode(BinarySearchTree::Node* ToNode, BinarySearchTree::Node* FromNode)
 {
@@ -267,7 +273,7 @@ BinarySearchTree::Node* BinarySearchTree::transplantNode(BinarySearchTree::Node*
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
 {
-    if (!_root) { _root = new Node(key, value, nullptr, nill, nill); return; }
+    if (!_root) { _root = new Node(key, value, nill, nill, nill); return; }
 
     Node location = *_root;
     std::pair<Node*, bool> direction;
@@ -275,7 +281,7 @@ void BinarySearchTree::insert(const Key& key, const Value& value)
     if (key < location.keyValuePair.first) { direction = std::make_pair(location.left, 1); }
     else { direction = std::make_pair(location.right, 0); }
 
-    while (direction.first != nullptr)
+    while (direction.first != nill)
     {
         location = *direction.first;
 
