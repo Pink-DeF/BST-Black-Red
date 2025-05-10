@@ -27,10 +27,6 @@ class BinarySearchTree
 
         void output_node_tree() const;
 
-        Node* find(Key key);
-        Node* find_min();
-        Node* find_max();
-
         void insert(const Key &key, const Value &value);
         void erase(const Key &key);
 
@@ -42,10 +38,17 @@ class BinarySearchTree
     };
     Node* nill = new Node();
 
+    //Rebalancing
     void leftrotate(Node* node);
     void rightrotate(Node* node);
     void balanceTree(Node* node);
 
+    //Friend
+    bool NodeExists(Node* node);
+    size_t ChildCount(Node* node);
+    Node* getChildOrMock(Node* node);
+    Node* transplantNode(Node* ToNode, Node* FromNode);
+    void fixAfterErase(Node* node);
 public:
     //! Конструктор по умолчанию
     BinarySearchTree() = default;
@@ -106,12 +109,6 @@ public:
     private:
         const Node *_node;
     };
-
-    //Friend
-    bool NodeExists(Node* node);
-    size_t ChildCount(Node* node);
-    Node* getChildOrMock(Node* node);
-    Node* transplantNode(Node* ToNode, Node* FromNode);
 
     void insert(const Key &key, const Value &value);
     void erase(const Key &key);

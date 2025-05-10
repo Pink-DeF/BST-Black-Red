@@ -52,41 +52,6 @@ void BinarySearchTree::Node::output_node_tree() const
     std::cout << std::endl;
 }
 
-BinarySearchTree::Node* BinarySearchTree::Node::find(Key key)
-{
-    Node* temp = this;
-    while (temp->keyValuePair.first != key)
-    {
-        if (key > temp->keyValuePair.first)
-        {
-            temp = temp->right;
-        }
-        else
-        {
-            temp = temp->left;
-        }
-    }
-    return temp;
-}
-BinarySearchTree::Node* BinarySearchTree::Node::find_min()
-{
-    Node* temp = this;
-    while (temp->left != nullptr)
-    {
-        temp = temp->left;
-    }
-    return temp;
-}
-BinarySearchTree::Node* BinarySearchTree::Node::find_max()
-{
-    Node* temp = this;
-    while (temp->right != nullptr)
-    {
-        temp = temp->right;
-    }
-    return temp;
-}
-
 void BinarySearchTree::Node::insert(const Key& key, const Value& value)
 {
     Node location = *this;
@@ -116,63 +81,7 @@ void BinarySearchTree::Node::insert(const Key& key, const Value& value)
 }
 void BinarySearchTree::Node::erase(const Key& key)
 {
-    Node* find_node = this->find(key);
-    Node* parent_find_node = find_node->parent;
-    Node* temp;
-    Node* temp2;
-    if (find_node == nullptr)
-    {
-        return;
-    }
-    //удаление узла, у которого вообще нет наследников
-    if ((find_node->left == nullptr) && (find_node->right == nullptr))
-    {
-        if (key >= parent_find_node->keyValuePair.first)
-        {
-            parent_find_node->right = nullptr;
-        }
-        else
-        {
-            parent_find_node->left = nullptr;
-        }
-    }
-    //удаление узла, у которого есть 1 наследник
-    else if ((find_node->left == nullptr) + (find_node->right == nullptr) == 1)
-    {
-        if (find_node->right != nullptr)
-        {
-            temp = find_node->right;
-        }
-        else
-        {
-            temp = find_node->left;
-        }
-        if (key >= parent_find_node->keyValuePair.first)
-        {
-            parent_find_node->right = temp;
-        }
-        else
-        {
-            parent_find_node->left = temp;
-        }
-    }
-    //удаление узла, у которого 2 наследника
-    else
-    {
-        temp = find_node->right; //правая часть удаляемого узла
-        temp2 = find_node->left; //левая часть удаляемого узла
-        Node* temp_min = temp->find_min();
-        temp_min->left = temp2;
-        if (key >= parent_find_node->keyValuePair.first)
-        {
-            parent_find_node->right = temp;
-        }
-        else
-        {
-            parent_find_node->left = temp;
-        }
-    }
-    delete find_node;
+
 }
 
 //Rebalancing
@@ -269,6 +178,10 @@ BinarySearchTree::Node* BinarySearchTree::transplantNode(BinarySearchTree::Node*
 {
 
 }
+void BinarySearchTree::fixAfterErase(BinarySearchTree::Node* node)
+{
+
+}
 
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
@@ -310,15 +223,16 @@ void BinarySearchTree::erase(const Key& key)
 
     if (ChildCount(DeleteNode) < 2)
     {
-
+        child = getChildOrMock(DeleteNode);
+        transplantNode(DeleteNode, child);
     }
     else
     {
-        Node* minNode = find_min(DeleteNode->right);
+        Node* minNode = findMin(DeleteNode->right);
         DeleteNode->keyValuePair = minNode->keyValuePair;
         DeleteNode->color = minNode->color;
         child = getChildOrMock(minNode);
         transplantNode(minNode, child);
     }
-    if(DeleteColor == BLACK){}
+    if (DeleteColor == BLACK) { fixAfterErase(child); }
 }
