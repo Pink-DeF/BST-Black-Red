@@ -23,12 +23,10 @@ class BinarySearchTree
              Node* parent = nullptr, Node* left = nullptr, 
              Node* right = nullptr);
         Node(const Node &other);
+
         bool operator==(const Node &other) const;
 
         void output_node_tree() const;
-
-        void insert(const Key &key, const Value &value);
-        void erase(const Key &key);
 
         std::pair<Key, Value> keyValuePair; 
         bool color = RED;
@@ -36,19 +34,20 @@ class BinarySearchTree
         Node* left = nullptr;   
         Node* right = nullptr;  
     };
-    Node* nill = new Node();
-
-    //Rebalancing
-    void leftrotate(Node* node);
-    void rightrotate(Node* node);
-    void balanceTree(Node* node);
+    const Node* nill = new Node(SPECIAL_KEY, SPECIAL_KEY, nullptr, nullptr, nullptr);
 
     //Friend
     bool NodeExists(Node* node);
     size_t ChildCount(Node* node);
     Node* getChildOrMock(Node* node);
     Node* transplantNode(Node* ToNode, Node* FromNode);
+
+    //Rebalancing
+    void leftrotate(Node* node);
+    void rightrotate(Node* node);
+    void balanceTree(Node* node);
     void fixAfterErase(Node* node);
+
 public:
     //! Конструктор по умолчанию
     BinarySearchTree() = default;
@@ -63,8 +62,6 @@ public:
     //! Деструктор
     ~BinarySearchTree();
 
-    //! \brief Итератор бинарного дерева поиска
-    //! \note Обходит дерево последовательно от узла с меньшим ключом к узлу с большим 
     class Iterator 
     {
     public:
@@ -88,7 +85,6 @@ public:
     private:
         Node *_node;
     };
-
     class ConstIterator 
     {
     public:
@@ -110,11 +106,15 @@ public:
         const Node *_node;
     };
 
+
+    ConstIterator min() const;
+    ConstIterator max() const;
+
+    Iterator find(const Key& key) const;
+    ConstIterator find(const Key& key);
+
     void insert(const Key &key, const Value &value);
     void erase(const Key &key);
-
-    ConstIterator find(const Key& key) const;
-    Iterator find(const Key& key);
 
     /*!***********************************************************
     Найти все элементы, у которых ключ равен key:
@@ -127,15 +127,6 @@ public:
     std::pair<Iterator, Iterator> equalRange(const Key &key);
     std::pair<ConstIterator, ConstIterator> equalRange(const Key &key) const;
     
-    //! Получить итератор на элемент с наименьшим ключем в дереве
-    ConstIterator min() const;
-    //! Получить итератор на элемент с наибольшим ключем в дереве
-    ConstIterator max() const;
-    //! Получить итератор на элемент с ключем key с наименьшим значением 
-    ConstIterator min(const Key &key) const;
-    //! Получить итератор на элемент с ключем key с наибольшим значением
-    ConstIterator max(const Key &key) const;
-
     //! Получить итератор на первый элемент дерева (элемент с наименьшим key)
     Iterator begin();
     //! Получить итератор на элемент, следующий за последним элементом дерева

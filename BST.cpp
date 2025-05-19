@@ -8,7 +8,6 @@ BinarySearchTree::Node::Node(Key key, Value value,
     if (!parent) { color = BLACK; }
     keyValuePair = std::make_pair (key, value);
 }
-
 BinarySearchTree::Node::Node(const Node& other)
 {
     if (*this == other) { return; }
@@ -21,8 +20,7 @@ BinarySearchTree::Node::Node(const Node& other)
 
 bool BinarySearchTree::Node::operator==(const Node& other) const
 {
-    if (keyValuePair.first == other.keyValuePair.first) { return 1; }
-    return 0;
+    return keyValuePair.first == other.keyValuePair.first ? 1 : 0;
 }
 
 void BinarySearchTree::Node::output_node_tree() const
@@ -52,37 +50,6 @@ void BinarySearchTree::Node::output_node_tree() const
     std::cout << std::endl;
 }
 
-void BinarySearchTree::Node::insert(const Key& key, const Value& value)
-{
-    Node location = *this;
-    std::pair<Node*, bool> direction;
-
-    if (key < location.keyValuePair.first) { direction = std::make_pair(location.left, 1); }
-    else { direction = std::make_pair(location.right, 0); }
-
-    while (direction.first != nullptr)
-    {
-        location = *direction.first;
-
-        if (key < location.keyValuePair.first) { direction = { location.left, 1 }; }
-        else { direction = { location.right, 0 }; }
-    }
-
-    if (direction.second)
-    {
-        location.left = new Node(key, value, &location, nullptr, nullptr);
-    }
-    else
-    {
-        location.right = new Node(key, value, &location, nullptr, nullptr);
-    }
-
-    return;
-}
-void BinarySearchTree::Node::erase(const Key& key)
-{
-
-}
 
 //Rebalancing
 void BinarySearchTree::leftrotate(Node* node)
@@ -157,6 +124,79 @@ void BinarySearchTree::balanceTree(Node* node)
     }
     _root->color = BLACK;
 }
+void BinarySearchTree::fixAfterErase(BinarySearchTree::Node* node)
+{
+    while (node != _root && node->color == BLACK)
+    {
+        BinarySearchTree::Node* brother;
+        if (node == node->parent->left)
+        {
+            brother = node->parent->right;
+            if (brother->color == RED)
+            {
+                brother->color = BLACK;
+                node->parent->color = RED;
+                leftrotate(node->parent);
+                brother = node->parent->right;
+            }
+
+            if (brother->left->color == BLACK && brother->right->color ==BLACK)
+            {
+                brother->color = RED;
+                node = node->parent;
+            }
+            else
+            {
+                if (brother->right->color == BLACK)
+                {
+                    brother->left->color = BLACK;
+                    brother->color = RED;
+                    rightrotate(brother);
+                    brother = node->parent->right;
+                }
+                brother->color = node->parent->color;
+                node->parent->color = BLACK;
+                brother->right->color = BLACK;
+                leftrotate(node->parent);
+                node = _root;
+            }
+        }
+        else
+        {
+            brother = node->parent->left;
+            if (brother->color == RED)
+            {
+                brother->color = BLACK;
+                node->parent->color = RED;
+                rightrotate(node->parent);
+                brother = node->parent->left;
+            }
+
+            if (brother->left->color == BLACK && brother->right->color == BLACK)
+            {
+                rightrotate(node->parent);
+                brother = node->parent->left;
+            }
+            else
+            {
+                if (brother->right->color == BLACK)
+                {
+                    brother->right->color = BLACK;
+                    brother->color = RED;
+                    leftrotate(brother);
+                    brother = node->parent->left;
+                }
+                brother->color = node->parent->color;
+                node->parent->color = BLACK;
+                brother->right->color = BLACK;
+                rightrotate(node->parent);
+                node = _root;
+            }
+        }
+    }
+    node->color = BLACK;
+}
+
 
 //Friend
 bool BinarySearchTree::NodeExists(Node* node)
@@ -176,18 +216,314 @@ BinarySearchTree::Node* BinarySearchTree::getChildOrMock(BinarySearchTree::Node*
 }
 BinarySearchTree::Node* BinarySearchTree::transplantNode(BinarySearchTree::Node* ToNode, BinarySearchTree::Node* FromNode)
 {
-
+    if (ToNode == _root) { _root = FromNode; }
+    else if (ToNode == ToNode->parent->left) { ToNode->parent->left = FromNode; }
+    else ToNode->parent->right = FromNode;
+    FromNode->parent = ToNode->parent;
 }
-void BinarySearchTree::fixAfterErase(BinarySearchTree::Node* node)
+
+
+//Iterator
+BinarySearchTree::Iterator::Iterator(Node* node): _node(node){}
+
+std::pair<Key, Value>& BinarySearchTree::Iterator::operator*()
+{
+    return _node->keyValuePair;
+}
+const std::pair<Key, Value>& BinarySearchTree::Iterator::operator*() const
+{
+    return _node->keyValuePair;
+}
+
+std::pair<Key, Value>* BinarySearchTree::Iterator::operator->()
+{
+    return &_node->keyValuePair;
+}
+const std::pair<Key, Value>* BinarySearchTree::Iterator::operator->() const
+{
+    return &_node->keyValuePair;
+}
+
+BinarySearchTree::Iterator BinarySearchTree::Iterator::operator++()
+{
+    if (_node->parent == nullptr) { return *this; }
+
+    // 1. Если у текущего узла есть правое поддерево
+    if (_node->right->parent != nullptr)
+    {
+        _node = _node->right;
+        while (_node->left->parent != nullptr){ _node = _node->left; }
+    }
+    else
+    {
+        // 2. Если правого поддерева нет, поднимаемся к родителю
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->right)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return *this;
+}
+BinarySearchTree::Iterator BinarySearchTree::Iterator::operator++(int)
+{
+    if (_node->parent == nullptr) { return *this; }
+
+    // 1. Если у текущего узла есть правое поддерево
+    if (_node->right->parent != nullptr)
+    {
+        _node = _node->right;
+        while (_node->left->parent != nullptr) { _node = _node->left; }
+    }
+    else
+    {
+        // 2. Если правого поддерева нет, поднимаемся к родителю
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->right)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return Iterator(temp);
+}
+
+BinarySearchTree::Iterator BinarySearchTree::Iterator::operator--()
+{
+    if (_node->parent == nullptr) { return *this; }
+
+    // 1. Если у узла есть левое поддерево
+    if (_node->left->parent != nullptr)
+    {
+        _node = _node->left;
+        while (_node->right->parent != nullptr) { _node = _node->right; }
+    }
+    else
+    {
+        // 2. Если левого поддерева нет
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->left)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return *this;
+}
+BinarySearchTree::Iterator BinarySearchTree::Iterator::operator--(int)
+{
+    if (_node->parent == nullptr) { return *this; }
+    Node* temp = _node;
+
+    // 1. Если у узла есть левое поддерево
+    if (_node->left->parent != nullptr)
+    {
+        _node = _node->left;
+        while (_node->right->parent != nullptr) { _node = _node->right; }
+    }
+    else
+    {
+        // 2. Если левого поддерева нет
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->left)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return Iterator(temp);
+}
+
+bool BinarySearchTree::Iterator::operator==(const Iterator& other) const
+{
+    return _node == other._node;
+}
+bool BinarySearchTree::Iterator::operator!=(const Iterator& other) const
+{
+    return _node != other._node;
+}
+
+
+//Const Iterator
+explicit BinarySearchTree::ConstIterator::ConstIterator(const Node* node): _node(node){}
+
+const std::pair<Key, Value>& BinarySearchTree::ConstIterator::operator*() const
+{
+    return _node->keyValuePair;
+}
+const std::pair<Key, Value>* BinarySearchTree::ConstIterator::operator->() const
+{
+    return &_node->keyValuePair;
+}
+
+BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator++()
+{
+    if (_node->parent == nullptr) { return *this; }
+
+    // 1. Если у текущего узла есть правое поддерево
+    if (_node->right->parent != nullptr)
+    {
+        _node = _node->right;
+        while (_node->left->parent != nullptr) { _node = _node->left; }
+    }
+    else
+    {
+        // 2. Если правого поддерева нет, поднимаемся к родителю
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->right)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return *this;
+}
+BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator++(int)
+{
+    if (_node->parent == nullptr) { return *this; }
+    const Node* temp = _node;
+
+    // 1. Если у текущего узла есть правое поддерево
+    if (_node->right->parent != nullptr)
+    {
+        _node = _node->right;
+        while (_node->left->parent != nullptr) { _node = _node->left; }
+    }
+    else
+    {
+        // 2. Если правого поддерева нет, поднимаемся к родителю
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->right)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return ConstIterator(temp);
+}
+
+BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator--()
+{
+    if (_node->parent == nullptr) { return *this; }
+
+    // 1. Если у узла есть левое поддерево
+    if (_node->left->parent != nullptr)
+    {
+        _node = _node->left;
+        while (_node->right->parent != nullptr) { _node = _node->right; }
+    }
+    else
+    {
+        // 2. Если левого поддерева нет
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->left)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return *this;
+}
+BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator--(int)
+{
+    if (_node->parent == nullptr) { return *this; }
+    const Node* temp = _node;
+
+    // 1. Если у узла есть левое поддерево
+    if (_node->left->parent != nullptr)
+    {
+        _node = _node->left;
+        while (_node->right->parent != nullptr) { _node = _node->right; }
+    }
+    else
+    {
+        // 2. Если левого поддерева нет
+        Node* parent = _node->parent;
+        while (parent->parent != nullptr && _node == parent->left)
+        {
+            _node = parent;
+            parent = parent->parent;
+        }
+        _node = parent;
+    }
+
+    return ConstIterator(temp);
+}
+
+bool BinarySearchTree::ConstIterator::operator==(const ConstIterator& other) const
+{
+    return _node == other._node;
+}
+bool BinarySearchTree::ConstIterator::operator!=(const ConstIterator& other) const
+{
+    return _node != other._node;
+}
+
+//Find
+BinarySearchTree::ConstIterator BinarySearchTree::min() const
 {
 
+}
+BinarySearchTree::ConstIterator BinarySearchTree::max() const
+{
+
+}
+
+BinarySearchTree::Iterator BinarySearchTree::find(const Key& key) const
+{
+    Iterator node(_root);
+
+    while ((*node).first != key)
+    {
+        if ((*node).first > key)
+        {
+            node--;
+        }
+        else
+        {
+            node++;
+        }
+    }
+
+    return node;
+}
+BinarySearchTree::ConstIterator BinarySearchTree::find(const Key& key)
+{
+    ConstIterator node(_root);
+
+    while ((*node).first != key)
+    {
+        if ((*node).first > key)
+        {
+            node--;
+        }
+        else
+        {
+            node++;
+        }
+    }
+
+    return node;
 }
 
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
 {
-    if (!_root) { _root = new Node(key, value, nill, nill, nill); return; }
-
     Node location = *_root;
     std::pair<Node*, bool> direction;
 
