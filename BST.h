@@ -34,13 +34,22 @@ class BinarySearchTree
         Node* left = nullptr;   
         Node* right = nullptr;  
     };
-    const Node* nill = new Node(SPECIAL_KEY, SPECIAL_KEY, nullptr, nullptr, nullptr);
+    Node* overMax = new Node(0, 0, nullptr, _root, nullptr);
+    Node* nill = new Node(0, 0, nullptr, nullptr, overMax);
+
 
     //Friend
     bool NodeExists(Node* node);
     size_t ChildCount(Node* node);
     Node* getChildOrMock(Node* node);
     Node* transplantNode(Node* ToNode, Node* FromNode);
+
+    Node* Find(const Key& key);
+    Node* findMin(Node* start);
+    void NodeDelete(Node* node);
+    Node* copyTree(Node* node);
+    void output_tree(Node* node);
+
 
     //Rebalancing
     void leftrotate(Node* node);
@@ -49,23 +58,30 @@ class BinarySearchTree
     void fixAfterErase(Node* node);
 
 public:
-    //! Конструктор по умолчанию
+    //Конструктор по умолчанию
     BinarySearchTree() = default;
-    //! Конструктор копирования
+
+
+    //Семантика копирования
     explicit BinarySearchTree(const BinarySearchTree &other);
-    //! Оператор присваивания копированием
     BinarySearchTree &operator=(const BinarySearchTree &other);
-    //! Конструктор перемещения
+
+
+    //Семантика перемещения
     explicit BinarySearchTree(BinarySearchTree &&other) noexcept;
-    //! Оператор присваивания перемещением
     BinarySearchTree &operator=(BinarySearchTree &&other) noexcept;
+
+
     //! Деструктор
     ~BinarySearchTree();
 
+
+    //Iterator and Const Iterator
     class Iterator 
     {
     public:
         explicit Iterator(Node *node);
+        Node* getnode();
 
         std::pair<Key, Value> &operator*();
         const std::pair<Key, Value> &operator*() const;
@@ -89,6 +105,7 @@ public:
     {
     public:
         explicit ConstIterator(const Node *node);
+        const Node* getnode();
 
         const std::pair<Key, Value> &operator*() const;
         const std::pair<Key, Value> *operator->() const;
@@ -103,46 +120,32 @@ public:
         bool operator!=(const ConstIterator &other) const;
 
     private:
-        const Node *_node;
+        const Node* _node;
     };
 
+
+    //Find
+    Iterator find(const Key& key) const;
+    ConstIterator find(const Key& key);
 
     ConstIterator min() const;
     ConstIterator max() const;
 
-    Iterator find(const Key& key) const;
-    ConstIterator find(const Key& key);
 
-    void insert(const Key &key, const Value &value);
-    void erase(const Key &key);
-
-    /*!***********************************************************
-    Найти все элементы, у которых ключ равен key:
-      - первый итератор пары - первый элемент в дереве, равный key
-      - второй итератор пары - первый элемент в дереве больший, чем key
-     
-    [pair.first, pair.second) - полуинтервал, содержащий все 
-    элементы с ключем key
-    **************************************************************/
-    std::pair<Iterator, Iterator> equalRange(const Key &key);
-    std::pair<ConstIterator, ConstIterator> equalRange(const Key &key) const;
-    
-    //! Получить итератор на первый элемент дерева (элемент с наименьшим key)
+    //Begin and End
     Iterator begin();
-    //! Получить итератор на элемент, следующий за последним элементом дерева
-    //! \note Т.е. tree.end()-- == tree.max()
     Iterator end();
 
-    //! Получить константный итератор на начало
     ConstIterator cbegin() const;
-    //! Получить константный итератор на конец
     ConstIterator cend() const;
 
-    //! Получить размер дерева
+    void insert(const Key& key, const Value& value);
+    void erase(const Key& key);
+
+
+    //Out
     size_t size() const;
-    //! Вывести дерево в консоль
     void output_tree();
-	//! Получить максимальную высоту в дереве
 	size_t max_height() const;
 
 private:
