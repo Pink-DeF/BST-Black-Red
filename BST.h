@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 using Key = uint32_t;
 using Value = double;
@@ -14,7 +15,7 @@ enum color
 
 class BinarySearchTree 
 {
-
+    //Node
     struct Node 
     {
     public:
@@ -26,7 +27,8 @@ class BinarySearchTree
 
         bool operator==(const Node &other) const;
 
-        void output_node_tree() const;
+        size_t get_height(Node* node);
+        void output_tree(Node* node);
 
         std::pair<Key, Value> keyValuePair; 
         bool color = RED;
@@ -46,9 +48,9 @@ class BinarySearchTree
 
     Node* Find(const Key& key);
     Node* findMin(Node* start);
+
     void NodeDelete(Node* node);
     Node* copyTree(Node* node);
-    void output_tree(Node* node);
 
 
     //Rebalancing
@@ -58,21 +60,21 @@ class BinarySearchTree
     void fixAfterErase(Node* node);
 
 public:
-    //Конструктор по умолчанию
+    //Default constructor
     BinarySearchTree() = default;
 
 
-    //Семантика копирования
+    //Semantics copy
     explicit BinarySearchTree(const BinarySearchTree &other);
     BinarySearchTree &operator=(const BinarySearchTree &other);
 
 
-    //Семантика перемещения
+    //Semantics move
     explicit BinarySearchTree(BinarySearchTree &&other) noexcept;
     BinarySearchTree &operator=(BinarySearchTree &&other) noexcept;
 
 
-    //! Деструктор
+    //Destructor
     ~BinarySearchTree();
 
 

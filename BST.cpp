@@ -23,32 +23,21 @@ bool BinarySearchTree::Node::operator==(const Node& other) const
     return keyValuePair.first == other.keyValuePair.first ? 1 : 0;
 }
 
-void BinarySearchTree::Node::output_node_tree() const
+size_t BinarySearchTree::Node::get_height(Node* node)
 {
-    if (this == nullptr)
-    {
-        std::cout << this;
-        return;
-    }
-    std::cout << "      " << keyValuePair.first << "        " << std::endl;
-    if (left)
-    {
-        std::cout << left->keyValuePair.first << "                ";
-    }
-    else
-    {
-        std::cout << "null" << "                ";
-    }
-    if (right)
-    {
-        std::cout << right->keyValuePair.first << "                " << std::endl;
-    }
-    else
-    {
-        std::cout << "null" << "                ";
-    }
-    std::cout << std::endl;
+    if (node->parent = nullptr) { return 0; }
+    return std::max(get_height(node->left), get_height(node->right)) + 1;
 }
+void BinarySearchTree::Node::output_tree(Node* node)
+{
+    if (node->parent != nullptr)
+    {
+        output_tree(node->left);
+        std::cout << node->keyValuePair.first << " ";
+        output_tree(node->right);
+    }
+}
+
 
 
 //Friend
@@ -91,8 +80,7 @@ BinarySearchTree::Node* BinarySearchTree::Find(const Key& key)
         }
     }
 
-    Iterator node(temp);
-    return node.getnode();
+    return temp;
 }
 BinarySearchTree::Node* BinarySearchTree::findMin(Node* start)
 {
@@ -104,6 +92,7 @@ BinarySearchTree::Node* BinarySearchTree::findMin(Node* start)
 
     return temp;
 }
+
 void BinarySearchTree::NodeDelete(Node* node)
 {
     if(node->left != nill){ NodeDelete(node->left); }
@@ -119,16 +108,6 @@ BinarySearchTree::Node* BinarySearchTree::copyTree(Node* node)
     newNode->right = copyTree(node->right);
     return newNode;
 }
-void BinarySearchTree::output_tree(Node* node)
-{
-    if (node != nill)
-    {
-        output_tree(node->left);
-        std::cout << node->keyValuePair.first << " ";
-        output_tree(node->right);
-    }
-}
-
 
 
 //Rebalancing
@@ -278,11 +257,11 @@ void BinarySearchTree::fixAfterErase(BinarySearchTree::Node* node)
 }
 
 
-//Конструктор по умолчанию
+//Default constructor
 BinarySearchTree::BinarySearchTree() = default;
 
 
-//Семантика копирования
+//Semantics copy
 explicit BinarySearchTree::BinarySearchTree(const BinarySearchTree& other)
 {
     this->_root = copyTree(other._root);
@@ -294,7 +273,7 @@ BinarySearchTree& BinarySearchTree::operator=(const BinarySearchTree& other)
 }
 
 
-//Семантика перемещения
+//Semantics move
 explicit BinarySearchTree::BinarySearchTree(BinarySearchTree&& other) noexcept
 {
     this->_root = other._root;
@@ -307,7 +286,7 @@ BinarySearchTree& BinarySearchTree::operator=(BinarySearchTree&& other) noexcept
 }
 
 
-//Деструктор
+//Destructor
 BinarySearchTree::~BinarySearchTree()
 {
     NodeDelete(nill);
@@ -631,6 +610,8 @@ BinarySearchTree::ConstIterator BinarySearchTree::cend() const
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
 {
+    if (Find(key) == nill) { return; }
+
     Node location = *_root;
     std::pair<Node*, bool> direction;
 
@@ -696,5 +677,6 @@ void BinarySearchTree::output_tree()
 }
 size_t BinarySearchTree::max_height() const
 {
-
+    if (_root == nullptr) { return 0; }
+    return std::max(_root->get_height(_root->left), _root->get_height(_root->left)) + 1;
 }
