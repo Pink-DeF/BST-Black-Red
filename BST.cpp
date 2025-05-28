@@ -636,6 +636,7 @@ void BinarySearchTree::insert(const Key& key, const Value& value)
         location.right = nNode;
     }
 
+    delete[] direction;
     _size++;
     balanceTree(nNode);
 }
