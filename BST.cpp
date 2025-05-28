@@ -323,7 +323,7 @@ BinarySearchTree::Iterator BinarySearchTree::Iterator::operator++()
 {
     if (_node->parent == nullptr) { return *this; }
 
-    // 1. Åñëè ó òåêóùåãî óçëà åñòü ïðàâîå ïîääåðåâî
+    // 1. Ã…Ã±Ã«Ã¨ Ã³ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã£Ã® Ã³Ã§Ã«Ã  Ã¥Ã±Ã²Ã¼ Ã¯Ã°Ã Ã¢Ã®Ã¥ Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã®
     if (_node->right->parent != nullptr)
     {
         _node = _node->right;
@@ -331,7 +331,7 @@ BinarySearchTree::Iterator BinarySearchTree::Iterator::operator++()
     }
     else
     {
-        // 2. Åñëè ïðàâîãî ïîääåðåâà íåò, ïîäíèìàåìñÿ ê ðîäèòåëþ
+        // 2. Ã…Ã±Ã«Ã¨ Ã¯Ã°Ã Ã¢Ã®Ã£Ã® Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã  Ã­Ã¥Ã², Ã¯Ã®Ã¤Ã­Ã¨Ã¬Ã Ã¥Ã¬Ã±Ã¿ Ãª Ã°Ã®Ã¤Ã¨Ã²Ã¥Ã«Ã¾
         Node* parent = _node->parent;
         while (parent->parent != nullptr && _node == parent->right)
         {
@@ -341,7 +341,7 @@ BinarySearchTree::Iterator BinarySearchTree::Iterator::operator++()
         _node = parent;
     }
 
-    //Åñëè ìû ïîïàëè â nill = this ìàêñèìàëåí, òî èäåì â overMax
+    //Ã…Ã±Ã«Ã¨ Ã¬Ã» Ã¯Ã®Ã¯Ã Ã«Ã¨ Ã¢ nill = this Ã¬Ã ÃªÃ±Ã¨Ã¬Ã Ã«Ã¥Ã­, Ã²Ã® Ã¨Ã¤Ã¥Ã¬ Ã¢ overMax
     if (_node->parent == nullptr) { _node = _node->right; }
     return *this;
 }
@@ -369,7 +369,7 @@ BinarySearchTree::Iterator BinarySearchTree::Iterator::operator--()
 
     }
 
-    // 1. Åñëè ó óçëà åñòü ëåâîå ïîääåðåâî
+    // 1. Ã…Ã±Ã«Ã¨ Ã³ Ã³Ã§Ã«Ã  Ã¥Ã±Ã²Ã¼ Ã«Ã¥Ã¢Ã®Ã¥ Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã®
     if (_node->left->parent != nullptr)
     {
         _node = _node->left;
@@ -377,7 +377,7 @@ BinarySearchTree::Iterator BinarySearchTree::Iterator::operator--()
     }
     else
     {
-        // 2. Åñëè ëåâîãî ïîääåðåâà íåò
+        // 2. Ã…Ã±Ã«Ã¨ Ã«Ã¥Ã¢Ã®Ã£Ã® Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã  Ã­Ã¥Ã²
         Node* parent = _node->parent;
         while (parent->parent != nullptr && _node == parent->left)
         {
@@ -427,7 +427,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator++()
 {
     if (_node->parent == nullptr) { return *this; }
 
-    // 1. Åñëè ó òåêóùåãî óçëà åñòü ïðàâîå ïîääåðåâî
+    // 1. Ã…Ã±Ã«Ã¨ Ã³ Ã²Ã¥ÃªÃ³Ã¹Ã¥Ã£Ã® Ã³Ã§Ã«Ã  Ã¥Ã±Ã²Ã¼ Ã¯Ã°Ã Ã¢Ã®Ã¥ Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã®
     if (_node->right->parent != nullptr)
     {
         _node = _node->right;
@@ -435,7 +435,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator++()
     }
     else
     {
-        // 2. Åñëè ïðàâîãî ïîääåðåâà íåò, ïîäíèìàåìñÿ ê ðîäèòåëþ
+        // 2. Ã…Ã±Ã«Ã¨ Ã¯Ã°Ã Ã¢Ã®Ã£Ã® Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã  Ã­Ã¥Ã², Ã¯Ã®Ã¤Ã­Ã¨Ã¬Ã Ã¥Ã¬Ã±Ã¿ Ãª Ã°Ã®Ã¤Ã¨Ã²Ã¥Ã«Ã¾
         Node* parent = _node->parent;
         while (parent->parent != nullptr && _node == parent->right)
         {
@@ -445,7 +445,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator++()
         _node = parent;
     }
 
-    //Åñëè ìû ïîïàëè â nill = this ìàêñèìàëåí, òî èäåì â overMax
+    //Ã…Ã±Ã«Ã¨ Ã¬Ã» Ã¯Ã®Ã¯Ã Ã«Ã¨ Ã¢ nill = this Ã¬Ã ÃªÃ±Ã¨Ã¬Ã Ã«Ã¥Ã­, Ã²Ã® Ã¨Ã¤Ã¥Ã¬ Ã¢ overMax
     if (_node->parent == nullptr) { _node = _node->right; }
     return *this;
 }
@@ -473,7 +473,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator--()
 
     }
 
-    // 1. Åñëè ó óçëà åñòü ëåâîå ïîääåðåâî
+    // 1. Ã…Ã±Ã«Ã¨ Ã³ Ã³Ã§Ã«Ã  Ã¥Ã±Ã²Ã¼ Ã«Ã¥Ã¢Ã®Ã¥ Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã®
     if (_node->left->parent != nullptr)
     {
         _node = _node->left;
@@ -481,7 +481,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::ConstIterator::operator--()
     }
     else
     {
-        // 2. Åñëè ëåâîãî ïîääåðåâà íåò
+        // 2. Ã…Ã±Ã«Ã¨ Ã«Ã¥Ã¢Ã®Ã£Ã® Ã¯Ã®Ã¤Ã¤Ã¥Ã°Ã¥Ã¢Ã  Ã­Ã¥Ã²
         Node* parent = _node->parent;
         while (parent->parent != nullptr && _node == parent->left)
         {
@@ -610,7 +610,7 @@ BinarySearchTree::ConstIterator BinarySearchTree::cend() const
 //Tree main
 void BinarySearchTree::insert(const Key& key, const Value& value)
 {
-    if (Find(key) == nill) { return; }
+    if (Find(key) != nill) { return; }
 
     Node location = *_root;
     std::pair<Node*, bool> direction;
